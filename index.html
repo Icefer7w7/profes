@@ -5,6 +5,7 @@
 
 <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
 <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
 
 <title>Teachers AR</title>
 </head>
@@ -14,33 +15,193 @@
 <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
 
 <a-assets>
-    <a-asset-item id="Roy" src="objects/RoyTEX.glb"></a-asset-item>
-    <a-asset-item id="Profe2" src="objects/Juandi-Mixta.glb"></a-asset-item>
-    <a-asset-item id="Profe3" src="objects/memoTEXT.glb"></a-asset-item>
+    <!-- 3d models -->
+    <a-asset-item id="Roy3D" src="assets/3d models/Roy3D.glb"></a-asset-item>
+    <a-asset-item id="Juandis3d" src="assets/3d models/Juandis3D.glb"></a-asset-item>
+    <a-asset-item id="Memo3D" src="assets/3d models/memo3D.glb"></a-asset-item>
+    
+    <!-- Images -->
+    <img id="imgRoy" src="assets/images/ROY.jpeg">
+    <img id="imgRoyOccupation" src="assets/images/ROY Occupation.jpeg">
 
+    <img id="imgJuandis" src="assets/images/Juan Diego.jpeg">
+    <img id="imgJuandisOccupation" src="assets/images/Juandis Occupation.jpeg">
+
+    <img id="imgMemo" src="assets/images/Memo.jpeg">
+    <img id="imgMemoOccupation" src="assets/images/Memo Occupation.jpeg">
 
 </a-assets>
 
-<!-- PROFESOR ROY -->
-<a-marker type="pattern" url="objects/pattern-marker-ROY.patt">
-    <a-entity gltf-model="#Roy" scale="0.5 0.5 0.5" position="0 0.5 0"></a-entity>
+<!-- ROY -->
+<a-marker type="pattern" url="assets/Patts/ROY.patt" id="markerRoy">
+    <a-entity gltf-model="#Roy3D" scale="0.5 0.5 0.5" position="0 0.5 0" rotation="0 -90 90"></a-entity>
+    
+    <!-- Images in the model -->
+    <a-image id="panelRoyName" src="#imgRoy" 
+             width="1.25" 
+             height="0.45" 
+             position="1.1 1 -0.7"
+             rotation="-90 0 0"
+             material="transparent: true; opacity: 0"></a-image>
+    <a-image id="panelRoyOccupation" src="#imgRoyOccupation" 
+             width="1" 
+             height="0.375" 
+             position="-1.2 0.5 -0.5"
+             rotation="-90 0 0"
+             material="transparent: true; opacity: 0"></a-image>
 </a-marker>
 
-<!-- PROFESOR Juandi -->
-<a-marker type="pattern" url="objects/juandi.patt">
-    <a-entity gltf-model="#Profe2" scale="0.5 0.5 0.5" position="0 0.5 0"></a-entity>
+<!-- JUANDIS -->
+<a-marker type="pattern" url="assets/Patts/juandi.patt" id="markerJuandis">
+    <a-entity gltf-model="#Juandis3d" scale="0.5 0.5 0.5" position="0 0.5 0" rotation="0 -90 90"></a-entity>
+
+        <!-- Images in the model -->
+    <a-image id="panelJuandisName" src="#imgJuandis" 
+             width="1.25" 
+             height="0.45" 
+             position="1.1 1 -0.7"
+             rotation="-90 0 0"
+             material="transparent: true; opacity: 0"></a-image>
+    <a-image id="panelJuandisOccupation" src="#imgJuandisOccupation" 
+             width="1" 
+             height="0.375" 
+             position="-1.2 0.5 -0.5"
+             rotation="-90 0 0"
+             material="transparent: true; opacity: 0"></a-image>
+
 </a-marker>
 
-<!-- PROFESOR memo -->
-<a-marker type="pattern" url="objects/memo.patt">
-    <a-entity gltf-model="#Profe3" scale="0.5 0.5 0.5" position="0 0.5 0"></a-entity>
+<!-- MEMO -->
+<a-marker type="pattern" url="assets/Patts/memo.patt" id="markerMemo">
+    <a-entity gltf-model="#Memo3D" scale="0.5 0.5 0.5" position="0 0.5 0" rotation="0 -90 90"></a-entity>
+
+            <!-- Images in the model -->
+    <a-image id="panelMemoName" src="#imgMemo" 
+             width="1.25" 
+             height="0.45" 
+             position="1.1 1 -0.7"
+             rotation="-90 0 0"
+             material="transparent: true; opacity: 0"></a-image>
+    <a-image id="panelMemoOccupation" src="#imgMemoOccupation" 
+             width="1" 
+             height="0.375" 
+             position="-1.2 0.5 -0.5"
+             rotation="-90 0 0"
+             material="transparent: true; opacity: 0"></a-image>
 </a-marker>
-
-
 
 <a-entity camera></a-entity>
 
 </a-scene>
+
+
+<!-- ANIMATIONS OF THE TEXT -->
+<script>
+
+document.querySelector('a-scene').addEventListener('loaded', function () {
+    const markerRoy = document.querySelector('#markerRoy');
+    const panelRoy = document.querySelector('#panelRoyName');
+    const panelRoyOccupation = document.querySelector('#panelRoyOccupation');
+
+    const markerJuandis = document.querySelector('#markerJuandis');
+    const panelJuandis = document.querySelector('#panelJuandisName');
+    const panelJuandisOccupation = document.querySelector('#panelJuandisOccupation');
+
+    const markerMemo = document.querySelector('#markerMemo');
+    const panelMemo = document.querySelector('#panelMemoName');
+    const panelMemoOccupation = document.querySelector('#panelMemoOccupation');
+
+    let hasAnimated = false;
+    //Roy animation
+    markerRoy.addEventListener('markerFound', function() {       
+
+        gsap.to(panelRoy.object3D.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: 0.8,
+            ease: "back.out(1.7)"
+        });
+        gsap.to(panelRoyOccupation.object3D.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: 0.8,
+            ease: "back.out(1.7)"
+        });
+        
+        let opacity = {value: 0};
+        gsap.to(opacity, {
+            value: 1,
+            duration: 0.8,
+            onUpdate: function() {
+                panelRoy.setAttribute('material', 'opacity', opacity.value);
+                panelRoyOccupation.setAttribute('material', 'opacity', opacity.value);
+            }
+        });
+    });
+
+    //Juandis animation
+        markerJuandis.addEventListener('markerFound', function() {       
+
+        gsap.to(panelJuandis.object3D.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: 0.8,
+            ease: "back.out(1.7)"
+        });
+        gsap.to(panelJuandisOccupation.object3D.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: 0.8,
+            ease: "back.out(1.7)"
+        });
+        
+        let opacity = {value: 0};
+        gsap.to(opacity, {
+            value: 1,
+            duration: 0.8,
+            onUpdate: function() {
+                panelJuandis.setAttribute('material', 'opacity', opacity.value);
+                panelJuandisOccupation.setAttribute('material', 'opacity', opacity.value);
+            }
+        });
+    });
+
+        //Memo animation
+        markerMemo.addEventListener('markerFound', function() {       
+
+        gsap.to(panelMemo.object3D.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: 0.8,
+            ease: "back.out(1.7)"
+        });
+        gsap.to(panelMemoOccupation.object3D.scale, {
+            x: 1,
+            y: 1,
+            z: 1,
+            duration: 0.8,
+            ease: "back.out(1.7)"
+        });
+        
+        let opacity = {value: 0};
+        gsap.to(opacity, {
+            value: 1,
+            duration: 0.8,
+            onUpdate: function() {
+                panelMemo.setAttribute('material', 'opacity', opacity.value);
+                panelMemoOccupation.setAttribute('material', 'opacity', opacity.value);
+            }
+        });
+    });
+
+    
+});
+</script>
 
 </body>
 </html>
